@@ -6,6 +6,9 @@ from extras import show_extras
 from finance_engine import audit_contract_with_llm
 
 st.set_page_config(page_title="Contract Explainer", page_icon="📄", layout="wide")
+from style import apply_style, hero
+apply_style()
+hero()
 
 @st.cache_data(show_spinner=False)
 def cached_analyze(text):
@@ -15,8 +18,6 @@ def cached_analyze(text):
 def cached_loan(text):
     return audit_contract_with_llm(text)
 
-st.title("📄 AI Contract Explainer")
-st.caption("Understand a contract in plain language before you sign it.")
 st.warning(
     "Educational tool, not legal advice. Flags are potential concerns, "
     "not legal conclusions. For important decisions, consult a qualified professional."
