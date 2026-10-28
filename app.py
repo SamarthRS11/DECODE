@@ -105,3 +105,28 @@ if st.session_state.get("result"):
                     st.info("The contract doesn't seem to mention this. " + ans.get("answer", ""))
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
+
+if st.session_state.get("text"):
+    from finance_engine import audit_contract_with_llm
+    st.divider()
+    st.subheader("🏦 True loan cost check")
+    st.caption("For loan or EMI agreements. Works out the real yearly rate after upfront fees. Estimates only, not legal or financial advice.")
+    if st.button("Check true loan cost"):
+        with st.spinner("Calculating..."):
+            try:
+                st.session_state["loan"] = audit_contract_with_llm(st.session_state["text"])
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
+
+    loan = st.session_state.get("loan")
+    if loan:
+        if not loan.get("calculated_apr"):
+            st.info("This doesn't look like a loan with an EMI, so no loan rate could be calculated.")
+        else:
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Advertised rate", f"{loan.get('stated_rate', 0)}% p.a.")
+            m2.metric("Estimated real rate", f"{loan['calculated_apr']}% p.a.")
+            m3.metric("Total extra cost", f"Rs {loan.get('total_extra_cost', 0):,.0f}")
+            st.write(loan.get("plain_summary", ""))
+            for f in loan.get("red_flags", []):
+                st.warning(f"**{f.get('clause', '')}** ({f.get('severity', '')}): {f.get('issue', '')}  \n*Potential concern, not a legal conclusion.*")
