@@ -84,3 +84,24 @@ if result:
                 st.write(c["simple_explanation"])
                 if c.get("risk_reason"):
                     st.info(f"Why this may matter: {c['risk_reason']}")
+
+if st.session_state.get("result"):
+    from qa import answer_question
+    st.divider()
+    st.subheader("💬 Ask a question about this contract")
+    question = st.text_input("For example: What happens if I pay rent late?")
+    if st.button("Get answer") and question.strip():
+        with st.spinner("Checking the contract..."):
+            try:
+                ans = answer_question(st.session_state["text"], question)
+                if ans.get("found"):
+                    st.success(ans["answer"])
+                    if ans.get("quote"):
+                        st.caption("SUPPORTING TEXT FROM THE CONTRACT")
+                        st.markdown(f"> {ans['quote']}")
+                        if not ans.get("verified"):
+                            st.caption("⚠️ Could not be matched exactly. Verify manually.")
+                else:
+                    st.info("The contract doesn't seem to mention this. " + ans.get("answer", ""))
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
