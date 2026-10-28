@@ -29,13 +29,12 @@ def show_extras(result):
     clauses = result.get("clauses", [])
     st.divider()
     st.subheader("📊 Risk overview")
-
     score = risk_score(clauses)
     label = "Low" if score < 25 else "Moderate" if score < 55 else "High"
-    col1, col2 = st.columns([1, 2])
-    col1.metric("Risk score", f"{score} / 100", label)
-    col2.progress(score / 100)
-    col2.caption("A rough indicator based on how many clauses were flagged. It is not a legal verdict.")
+    c1, c2 = st.columns([1, 2])
+    c1.metric("Risk score", f"{score} / 100", label)
+    c2.progress(score / 100)
+    c2.caption("A rough indicator based on how many clauses were flagged. Not a legal verdict.")
 
     if clauses:
         df = pd.DataFrame(clauses)
@@ -45,7 +44,7 @@ def show_extras(result):
         st.bar_chart(table, color=["#e74c3c", "#f39c12", "#2ecc71"])
 
     st.subheader("🧮 What-if simulator")
-    st.caption("Change the numbers to match your contract. These are illustrative estimates only.")
+    st.caption("Enter the numbers from your contract. Illustrative estimates only.")
     a, b, c = st.columns(3)
     rent = a.number_input("Monthly rent (Rs)", value=25000, step=1000)
     pct = b.number_input("Late penalty (% per day)", value=5.0, step=0.5)
@@ -54,7 +53,6 @@ def show_extras(result):
     deposit = d.number_input("Security deposit (Rs)", value=150000, step=5000)
     lock = e.number_input("Lock-in (months)", value=11, step=1)
     stayed = f.slider("Months you stay", 1, 24, 6)
-
     late_fee = rent * pct / 100 * days
     forfeited = deposit if stayed < lock else 0
     m1, m2 = st.columns(2)

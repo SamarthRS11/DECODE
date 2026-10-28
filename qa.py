@@ -1,6 +1,4 @@
-import json, time
-from google.genai import types
-from analyzer import client, MODEL, _norm
+from analyzer import ask_json, _norm
 
 QA_PROMPT = """You answer questions about a contract for an ordinary person.
 Use ONLY the contract text below. Do not use outside knowledge. Do not give legal advice.
@@ -15,24 +13,9 @@ CONTRACT:
 QUESTION: {question}
 """
 
-def answer_question(contract_text: str, question: str) -> dict:
+def answer_question(contract_text, question):
     prompt = QA_PROMPT.replace("{contract}", contract_text).replace("{question}", question)
-    last_error = None
-    for attempt in range(3):
-        try:
-            response = client.models.generate_content(
-                model=MODEL,
-                contents=prompt,
-                config=types.GenerateContentConfig(response_mime_type="application/json"),
-            )
-            data = json.loads(response.text)
-            break
-        except Exception as e:
-            last_error = e
-            time.sleep(3 * (attempt + 1))
-    else:
-        raise RuntimeError(f"The AI service is busy. Please try again. ({last_error})")
-
-    quote = data.get("quote", "")
+    data = ask_json(prompt)
+    quote = data.get("quote", "") or ""
     data["verified"] = bool(quote) and _norm(quote) in _norm(contract_text)
     return data
