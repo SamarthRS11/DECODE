@@ -51,7 +51,7 @@ def audit_contract_with_llm(contract_text: str) -> dict:
     """
 
     response = client.models.generate_content(
-        model="gemini-3.8-flash",
+        model=os.getenv("GEMINI_MODEL", "gemini-3.7-flash"),
         contents=prompt,
         config={"response_mime_type": "application/json"}
     )
