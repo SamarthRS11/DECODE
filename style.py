@@ -2,105 +2,130 @@ import streamlit as st
 
 CSS = """
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"], .stApp {font-family: 'Inter', sans-serif;}
 #MainMenu, footer, header {visibility: hidden;}
 
-/* Layer 1: page background with soft color glows */
+/* Page background: soft layered glows */
 .stApp {
   background:
-    radial-gradient(900px 500px at 8% -5%, rgba(124,58,237,0.14), transparent 60%),
-    radial-gradient(800px 500px at 100% 10%, rgba(79,70,229,0.12), transparent 60%),
-    radial-gradient(700px 400px at 50% 100%, rgba(16,185,129,0.08), transparent 60%),
-    #F8FAFC;
+    radial-gradient(1000px 520px at 5% -8%, rgba(124,58,237,0.16), transparent 60%),
+    radial-gradient(900px 520px at 105% 8%, rgba(236,72,153,0.12), transparent 60%),
+    radial-gradient(800px 460px at 50% 105%, rgba(14,165,233,0.10), transparent 60%),
+    #F6F7FB;
 }
 .block-container {padding-top: 1.2rem; max-width: 1150px;}
 
-/* Layer 2: hero banner with decorative glow circles */
+/* Hero: dark, animated gradient with floating glow blobs */
 .hero {
-  position: relative; overflow: hidden;
-  background: linear-gradient(135deg, #4338CA 0%, #7C3AED 55%, #C026D3 100%);
-  color: white; padding: 34px 36px; border-radius: 22px; margin-bottom: 16px;
-  box-shadow: 0 18px 40px rgba(79,70,229,0.28);
+  position: relative; overflow: hidden; color: white;
+  padding: 46px 42px 38px 42px; border-radius: 28px; margin-bottom: 18px;
+  background: linear-gradient(120deg, #0F172A, #312E81, #6D28D9, #0F172A);
+  background-size: 300% 300%; animation: flow 14s ease infinite;
+  box-shadow: 0 28px 60px rgba(49,46,129,0.38);
+  border: 1px solid rgba(255,255,255,0.10);
 }
-.hero::before {
-  content: ""; position: absolute; width: 280px; height: 280px; border-radius: 50%;
-  right: -70px; top: -90px; background: rgba(255,255,255,0.12);
+@keyframes flow {0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}}
+.blob {position: absolute; border-radius: 50%; filter: blur(46px); opacity: .55; animation: float 9s ease-in-out infinite;}
+.b1 {width: 260px; height: 260px; background: #8B5CF6; right: -60px; top: -80px;}
+.b2 {width: 220px; height: 220px; background: #EC4899; right: 200px; bottom: -120px; animation-delay: -3s;}
+.b3 {width: 180px; height: 180px; background: #22D3EE; left: -50px; bottom: -90px; animation-delay: -6s;}
+@keyframes float {0%,100%{transform: translateY(0)} 50%{transform: translateY(-22px)}}
+
+.badge {
+  position: relative; z-index: 1; display: inline-block; padding: 5px 14px; border-radius: 999px;
+  font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #E9D5FF;
 }
-.hero::after {
-  content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%;
-  right: 130px; bottom: -100px; background: rgba(255,255,255,0.09);
+.hero h1 {
+  position: relative; z-index: 1; margin: 14px 0 6px 0; font-size: 2.9rem; line-height: 1.1;
+  font-weight: 800; letter-spacing: -0.02em; color: white; padding: 0;
 }
-.hero h1 {margin: 0; font-size: 2.2rem; color: white; position: relative; z-index: 1;}
-.hero p {margin: 8px 0 16px 0; font-size: 1.08rem; color: white; opacity: 0.93; position: relative; z-index: 1;}
+.hero h1 .grad {
+  background: linear-gradient(90deg, #67E8F9, #C4B5FD, #F9A8D4);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p {position: relative; z-index: 1; margin: 0 0 18px 0; font-size: 1.1rem; color: #E2E8F0; max-width: 640px;}
 .pill {
-  position: relative; z-index: 1; display: inline-block;
-  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28);
-  color: white; padding: 5px 13px; border-radius: 999px; font-size: 0.8rem; margin: 3px 6px 3px 0;
-  backdrop-filter: blur(4px);
+  position: relative; z-index: 1; display: inline-block; margin: 3px 6px 3px 0;
+  padding: 6px 14px; border-radius: 999px; font-size: .8rem; font-weight: 500; color: white;
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(6px);
 }
 
-/* Layer 3: how-it-works strip */
-.steps {display: flex; gap: 12px; margin: 0 0 18px 0; flex-wrap: wrap;}
+/* How-it-works strip: glass cards with a gradient top edge */
+.steps {display: flex; gap: 14px; margin: 0 0 22px 0; flex-wrap: wrap;}
 .step {
-  flex: 1; min-width: 200px; background: white; border: 1px solid #E2E8F0;
-  border-radius: 16px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(15,23,42,0.05);
-  transition: transform .18s ease, box-shadow .18s ease;
+  flex: 1; min-width: 210px; position: relative; overflow: hidden;
+  background: rgba(255,255,255,0.75); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.9); border-radius: 18px; padding: 18px 18px 16px 18px;
+  box-shadow: 0 6px 20px rgba(15,23,42,0.07);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-.step:hover {transform: translateY(-3px); box-shadow: 0 10px 22px rgba(79,70,229,0.15);}
-.step b {color: #4F46E5;}
-.step span {display: block; color: #475569; font-size: 0.88rem; margin-top: 2px;}
+.step::before {content:""; position:absolute; left:0; top:0; right:0; height:4px;
+  background: linear-gradient(90deg, #6366F1, #EC4899);}
+.step:hover {transform: translateY(-4px); box-shadow: 0 16px 34px rgba(99,102,241,0.22);}
+.step b {color: #1E1B4B; font-size: 1rem;}
+.step span {display: block; color: #64748B; font-size: .88rem; margin-top: 4px;}
 
 /* Metric cards */
 [data-testid="stMetric"] {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
-  border: 1px solid #E0E7FF; border-radius: 16px; padding: 14px 18px;
-  box-shadow: 0 2px 8px rgba(15,23,42,0.06);
-  transition: transform .18s ease, box-shadow .18s ease;
+  position: relative; overflow: hidden; background: rgba(255,255,255,0.85);
+  border: 1px solid #E5E7EB; border-radius: 18px; padding: 16px 20px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.07);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-[data-testid="stMetric"]:hover {transform: translateY(-3px); box-shadow: 0 10px 22px rgba(79,70,229,0.16);}
+[data-testid="stMetric"]::before {content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+  background: linear-gradient(180deg, #6366F1, #EC4899);}
+[data-testid="stMetric"]:hover {transform: translateY(-4px); box-shadow: 0 16px 32px rgba(99,102,241,0.2);}
+[data-testid="stMetricValue"] {font-weight: 800; letter-spacing: -0.01em;}
 
 /* Clause cards */
 [data-testid="stVerticalBlockBorderWrapper"] {
-  background: white; border-radius: 16px; border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 2px 10px rgba(15,23,42,0.06);
-  transition: box-shadow .18s ease, border-color .18s ease;
+  background: rgba(255,255,255,0.9); border-radius: 18px; border: 1px solid #E5E7EB !important;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
 }
 [data-testid="stVerticalBlockBorderWrapper"]:hover {
-  box-shadow: 0 10px 26px rgba(79,70,229,0.14); border-color: #C7D2FE !important;
+  box-shadow: 0 16px 34px rgba(99,102,241,0.16); border-color: #C7D2FE !important; transform: translateY(-2px);
 }
 
 /* Buttons */
 .stButton > button, .stDownloadButton > button {
-  border-radius: 12px; font-weight: 600; padding: 0.6rem 1.3rem;
+  border-radius: 14px; font-weight: 600; padding: 0.65rem 1.5rem; border: 1px solid #C7D2FE;
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .stButton > button:hover, .stDownloadButton > button:hover {
-  transform: translateY(-2px); box-shadow: 0 8px 18px rgba(79,70,229,0.25);
+  transform: translateY(-2px); box-shadow: 0 10px 22px rgba(99,102,241,0.28);
 }
 .stButton > button[kind="primary"] {
-  background: linear-gradient(135deg, #4F46E5, #7C3AED); border: none; color: white;
+  background: linear-gradient(135deg, #4F46E5, #9333EA 60%, #DB2777); border: none; color: white;
+  box-shadow: 0 8px 20px rgba(124,58,237,0.35);
 }
 
 /* Inputs */
 .stTextArea textarea, .stTextInput input, .stNumberInput input {
-  border-radius: 12px !important; border: 1px solid #CBD5E1 !important; background: white !important;
+  border-radius: 14px !important; border: 1px solid #D1D5DB !important; background: white !important;
 }
 .stTextArea textarea:focus, .stTextInput input:focus {
-  border-color: #6366F1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.18) !important;
+  border-color: #7C3AED !important; box-shadow: 0 0 0 4px rgba(124,58,237,0.15) !important;
 }
 
-/* Section headings with an accent bar */
+/* Headings with gradient accent bar */
 h2, h3 {
-  margin-top: 1.4rem; padding-left: 12px; border-left: 5px solid #6366F1; border-radius: 2px;
+  margin-top: 1.6rem; padding-left: 14px; font-weight: 700; letter-spacing: -0.01em;
+  border-left: 5px solid; border-image: linear-gradient(180deg, #6366F1, #EC4899) 1;
 }
 
-/* Tables and alerts */
-[data-testid="stDataFrame"] {border-radius: 14px; overflow: hidden; border: 1px solid #E2E8F0;}
-[data-testid="stAlert"] {border-radius: 14px;}
-hr {border: none; height: 1px; background: linear-gradient(90deg, transparent, #C7D2FE, transparent);}
+/* Tables, alerts, dividers */
+[data-testid="stDataFrame"] {border-radius: 16px; overflow: hidden; border: 1px solid #E5E7EB; box-shadow: 0 4px 14px rgba(15,23,42,0.05);}
+[data-testid="stAlert"] {border-radius: 16px;}
+hr {border: none; height: 2px; background: linear-gradient(90deg, transparent, #C4B5FD, #F9A8D4, transparent);}
 
-/* Smooth fade-in for results */
-@keyframes fadeUp {from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: none;}}
-[data-testid="stVerticalBlockBorderWrapper"], [data-testid="stMetric"] {animation: fadeUp .45s ease both;}
+/* Fade-in */
+@keyframes fadeUp {from {opacity: 0; transform: translateY(12px);} to {opacity: 1; transform: none;}}
+[data-testid="stVerticalBlockBorderWrapper"], [data-testid="stMetric"] {animation: fadeUp .5s ease both;}
 </style>
 """
 
@@ -111,17 +136,19 @@ def hero():
     st.markdown(
         """
         <div class="hero">
-          <h1>📄 AI Contract Explainer</h1>
-          <p>Understand any contract in plain language, before you sign it.</p>
+          <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+          <span class="badge">Financial inclusion · AI-powered</span>
+          <h1>Understand any contract in <span class="grad">plain language</span></h1>
+          <p>Know what you are signing before you sign it. Risky clauses flagged, real loan cost revealed, every answer quoted from your document.</p>
           <span class="pill">Plain-English summary</span>
           <span class="pill">Risky clauses flagged</span>
           <span class="pill">Real loan cost</span>
           <span class="pill">Hindi &amp; Kannada</span>
-          <span class="pill">Answers quoted from your contract</span>
+          <span class="pill">Quotes verified</span>
         </div>
         <div class="steps">
           <div class="step"><b>1. Add your contract</b><span>Paste text, upload a PDF, or try a sample.</span></div>
-          <div class="step"><b>2. Read it in plain words</b><span>Each clause shown next to its original text, with risk flags.</span></div>
+          <div class="step"><b>2. Read it in plain words</b><span>Each clause beside its original text, with risk flags.</span></div>
           <div class="step"><b>3. Ask and check</b><span>Ask questions, see the real loan rate, download a report.</span></div>
         </div>
         """,
