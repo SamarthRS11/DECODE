@@ -6,7 +6,7 @@ from pypdf import PdfReader
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
 
 PROMPT = """You are a contract explainer for ordinary people with no legal background.
 Analyze the contract below. Return ONLY valid JSON in exactly this shape:
